@@ -22,8 +22,7 @@ import os
 import math
 import imageio
 
-from networks import net2 as net
-from networks import PSPnet
+from networks import gcn
 from python_scripts import learning_rate_decays as lrd, temp
 import dataloader as dl
 from loss.Ln_regularization import Ln_Loss
@@ -207,9 +206,7 @@ def count_parameters(model):
 #             Load Model
 # ------------------------------------
 
-
-model = PSPnet.PSPNet(n_classes = 25,psp_size=512, deep_features_size=256, backend='resnet34')
-
+model = gcn.FCN(num_classes = 25)
 
 # ------------------------------------
 #             Load Dataset
@@ -276,8 +273,7 @@ try:
             image = sample_batched['image'].to(device,dtype = torch.float)
             label = sample_batched['label'].to(device,dtype = torch.long)
 
-            result, _ = model(image)
-
+            result = model(image)
             
             if (epoch+1)%each == 0:
 
@@ -340,7 +336,7 @@ try:
                 label = sample_batched['label'].to(device,dtype = torch.long)
 
                 #pdb.set_trace() # puntico de pytlab
-                result = model(image)[0]
+                result = model(image)
                 if ckpt and (epoch+1)%each == 0:
                     # save images
                     # create segmentation
@@ -386,9 +382,6 @@ print('Training finished!!')
 print('Saving model')
 torch.save(model.state_dict(),os.path.join(save_dir,dir_name,'model.pkl'))
 
-print('Running test')
-model.eval()
-run_test(model = model, dataloader = val_dataloader, path = join(save_dir, dir_name), device = device)
 
 fig = plt.figure(0)
 plt.plot([i+1 for i in range(len(val_vec))],training_vec , 'b', label = 'Training Loss')
@@ -399,14 +392,5 @@ plt.legend()
 plt.savefig(join(save_dir,dir_name,'running_loss.png'))
 plt.close(fig)
 
-#plt.figure(1)
-#for i in range(len(J)):
-#    J[i] = J[i]*((not np.isnan(J[i])).astype(np.float))
-#for j in range(25):
-#    plt.plot([10*(i+1) for i in range(len(J))], [J[i][j] for i in range(len(J))], label = str(j))
-#plt.xlabel('Epoch')
-#plt.ylabel('Jaccard Index')
-#plt.legend()
-#plt.savefig(join(save_dir,dir_name,'Jaccard.png'))
-#plt.close(fig2)
-#print(join(save_dir,dir_name,'Jaccard.png'))
+model.eval()
+run_test(model = model, dataloader = val_dataloader, path = join(save_dir, dir_name), device = device)

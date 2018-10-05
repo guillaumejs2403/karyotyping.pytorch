@@ -6,22 +6,24 @@ import torch.utils.model_zoo as model_zoo
 from torchvision import models
 
 import math
+import pdb
 
 
 class GCN(nn.Module):
     def __init__(self, inplanes, planes, ks=7):
         super(GCN, self).__init__()
         self.conv_l1 = nn.Conv2d(inplanes, planes, kernel_size=(ks, 1),
-                                 padding=(ks/2, 0))
+                                 padding=(ks//2, 0))
 
         self.conv_l2 = nn.Conv2d(planes, planes, kernel_size=(1, ks),
-                                 padding=(0, ks/2))
+                                 padding=(0, ks//2))
         self.conv_r1 = nn.Conv2d(inplanes, planes, kernel_size=(1, ks),
-                                 padding=(0, ks/2))
+                                 padding=(0, ks//2))
         self.conv_r2 = nn.Conv2d(planes, planes, kernel_size=(ks, 1),
-                                 padding=(ks/2, 0))
+                                 padding=(ks//2, 0))
 
     def forward(self, x):
+        #pdb.set_trace()
         x_l = self.conv_l1(x)
         x_l = self.conv_l2(x_l)
 
@@ -102,10 +104,10 @@ class FCN(nn.Module):
     def _classifier(self, inplanes):
         return nn.Sequential(
             nn.Conv2d(inplanes, inplanes, 3, padding=1, bias=False),
-            nn.BatchNorm2d(list(inplanes//2)), #nn.InstanceNorm2d(inplanes//2), #
+            nn.BatchNorm2d(linplanes//2), #nn.InstanceNorm2d(inplanes//2), #
             nn.ReLU(inplace=True),
             nn.Dropout(.1),
-            nn.Conv2d(inplanes/2, self.num_classes, 1),
+            nn.Conv2d(inplanes//2, self.num_classes, 1),
         )
 
     def forward(self, x):
@@ -121,7 +123,7 @@ class FCN(nn.Module):
         fm2 = self.layer2(fm1)
         fm3 = self.layer3(fm2)
         fm4 = self.layer4(fm3)
-
+        
         gcfm1 = self.refine1(self.gcn1(fm4))
         gcfm2 = self.refine2(self.gcn2(fm3))
         gcfm3 = self.refine3(self.gcn3(fm2))

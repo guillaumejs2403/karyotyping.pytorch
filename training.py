@@ -116,7 +116,7 @@ momentum = 0.9
 n_epochs = args.epochs
 save_dir = args.save_dir 
 
-ROOT_DIR_DATASET = '/media/SSD3/MFISH_Dataset/MFISH_split_normal'
+ROOT_DIR_DATASET = '/home/gjeanneret/MFISH_split_normal'
 
 # data augmentation online
 data_aug = False
@@ -357,7 +357,7 @@ try:
 
         val_vec.append(running_loss_val)
 
-        if ckpt and np.sum(val_vec>running_loss_val)==len(val_vec)-1:
+        if ckpt and np.sum(np.asarray(val_vec)>running_loss_val)==len(val_vec)-1:
             print('Making check point - Best')
             torch.save(model.state_dict(),os.path.join(save_dir,dir_name,'best.pkl'))
 

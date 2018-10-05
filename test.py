@@ -85,8 +85,8 @@ if __name__ == '__main__':
     # ------------------------------------
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    ROOT_DIR_DATASET = '/media/SSD3/MFISH_Dataset/MFISH_split_normal'
-    DATA_MODEL = '/media/user_home4/gjeanneret/karyotyping.pytorch/psp_net-resnet34-l1r/epochs_300_lr_5e-05_batchSize_5/ckpt_50'
+    ROOT_DIR_DATASET = '/home/gjeanneret/MFISH_split_normal'
+    DATA_MODEL = '/home/gjeanneret/karyotyping.pytorch/psp_net-resnet34-l1r/epochs_300_lr_5e-05_batchSize_5/ckpt_50'
 
     # ------------------------------------
     #              Dataset  

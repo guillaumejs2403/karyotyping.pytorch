@@ -161,5 +161,4 @@ if __name__ == '__main__':
     db = MFISH_Dataset(root_dir = ROOT_DIR, folder = 'train', add_augment = True, totensor = False, getdic = False, only_chr = True)
     for i in range(db.__len__()):
         im,gt  = db.__getitem__(i)
-        imageio.imwrite('data/im/im_'+str(i)+'.png',im.astype(np.uint8).transpose(1,2,0))
-        imageio.imwrite('data/gt/gt_'+str(i)+'.png',gt.astype(np.uint8)*255)
+        print(im.shape)

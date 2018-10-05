@@ -2,7 +2,6 @@ import torch
 import numpy as np
 import os
 
-from networks import net2 as net
 import dataloader as dl
 import torch.utils.data as data
 import scipy.misc as m
@@ -18,9 +17,9 @@ def multi_idx_jaccard(pred,label, categories = 25, device = None):
     segmentation = torch.argmax(pred, dim = 1)
     segmentation = torch.squeeze(segmentation).to('cpu').numpy()
     for i in range(categories):
-        inters = np.sum(np.logical_and(segmentation==i,label==i))
+        inter = np.sum(np.logical_and(segmentation== i, label == i))
         union = np.sum(np.logical_or(segmentation == i, label == i))
-        val[i] = inters/union
+        val[i] = inter/union
 
     return [val,segmentation]
 
@@ -33,9 +32,6 @@ def multi_idx_jaccard(pred,label, categories = 25, device = None):
 def run_test(model, dataloader,path, device, save = True, categories = 25):
 
 
-    print('Running Test')
-    n = 0
-    s = 0
     if not os.path.exists(join(path,'results')):
         os.mkdir(join(path,'results'))
 
@@ -45,7 +41,8 @@ def run_test(model, dataloader,path, device, save = True, categories = 25):
     for i_batch, sample_batched in enumerate(dataloader):
         inputs = sample_batched['image'].to(device,dtype = torch.float)
         labels = sample_batched['label'].to(device,dtype = torch.float)
-        pred = model(inputs)[0]
+        
+        pred = model(inputs)
 
         n += labels.shape[0]
         if i_batch == 0:

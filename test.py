@@ -35,9 +35,6 @@ def run_test(model, dataloader,path, device, save = True, categories = 25):
     if not os.path.exists(join(path,'results')):
         os.mkdir(join(path,'results'))
 
-
-
-    print('----- Test running -----')
     for i_batch, sample_batched in enumerate(dataloader):
         inputs = sample_batched['image'].to(device,dtype = torch.float)
         labels = sample_batched['label'].to(device,dtype = torch.float)

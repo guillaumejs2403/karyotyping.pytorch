@@ -357,9 +357,9 @@ try:
 
         val_vec.append(running_loss_val)
 
-        if ckpt and (epoch+1)%each == 0:
-            print('Making check point')
-            make_ckpt(model,save_dir,dir_name, epoch+1,[running_loss,running_loss_val])
+        if ckpt and np.sum(val_vec>running_loss_val)==len(val_vec)-1:
+            print('Making check point - Best')
+            torch.save(model.state_dict(),os.path.join(save_dir,dir_name,'best.pkl'))
 
         print('Epoch:',epoch+1, '|| Total loss validation:', running_loss_val)
         try:

@@ -15,6 +15,9 @@ def L2_Loss(model):
 
 def Ln_Loss(model,n):
     regularization_loss = 0
+    if n==0:
+        return 0
+
     if n%2==0:
         for param in model.parameters():
             regularization_loss += torch.sum(torch.pow(param,n))

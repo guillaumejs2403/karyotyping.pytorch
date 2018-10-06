@@ -38,7 +38,7 @@ class GCN(nn.Module):
 class Refine(nn.Module):
     def __init__(self, planes):
         super(Refine, self).__init__()
-        self.bn = nn.BatchNorm2d(planes) #nn.InstanceNorm2d(planes) #
+        self.bn = nn.InstanceNorm2d(planes) #self.bn = nn.BatchNorm2d(planes) #
         self.relu = nn.ReLU(inplace=True)
         self.conv1 = nn.Conv2d(planes, planes, kernel_size=3, padding=1)
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, padding=1)
@@ -100,11 +100,11 @@ class FCN(nn.Module):
         #self.out5 = self._classifier(32)
 
         self.transformer = nn.Conv2d(256, 64, kernel_size=1)
-
+        self.dropout = nn.Dropout2d()
     def _classifier(self, inplanes):
         return nn.Sequential(
             nn.Conv2d(inplanes, inplanes, 3, padding=1, bias=False),
-            nn.BatchNorm2d(linplanes//2), #nn.InstanceNorm2d(inplanes//2), #
+            nn.InstanceNorm2d(inplanes//2), #nn.BatchNorm2d(linplanes//2), #
             nn.ReLU(inplace=True),
             nn.Dropout(.1),
             nn.Conv2d(inplanes//2, self.num_classes, 1),
@@ -130,10 +130,13 @@ class FCN(nn.Module):
         gcfm4 = self.refine4(self.gcn4(pool_x))
         gcfm5 = self.refine5(self.gcn5(conv_x))
 
+
+
         fs1 = self.refine6(F.upsample_bilinear(gcfm1, fm3.size()[2:]) + gcfm2)
         fs2 = self.refine7(F.upsample_bilinear(fs1, fm2.size()[2:]) + gcfm3)
         fs3 = self.refine8(F.upsample_bilinear(fs2, pool_x.size()[2:]) + gcfm4)
         fs4 = self.refine9(F.upsample_bilinear(fs3, conv_x.size()[2:]) + gcfm5)
+        fs4 = self.dropout(fs4)
         out = self.refine10(F.upsample_bilinear(fs4, input.size()[2:]))
 
         return out#, fs4, fs3, fs2, fs1, gcfm1

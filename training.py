@@ -229,10 +229,8 @@ model.to(device)
 #                  Loss
 # ------------------------------------------
 
+v = dl.classImbalance(5)
 
-v = [1. for _ in range(25)]
-v[0] = 1/10000
-v[-1] = 10
 weight = torch.Tensor(v)
 criterion = nn.CrossEntropyLoss(weight = weight).to(device)
 # cls_criterion =  nn.BCEWithLogitsLoss(weight = weight)

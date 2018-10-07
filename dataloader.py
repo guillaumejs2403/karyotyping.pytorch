@@ -10,7 +10,7 @@ from torchvision import transforms
 # 
 
 batch_size = 2
-ROOT_DIR = '/media/SSD3/MFISH_Dataset/MFISH_split_normal'
+ROOT_DIR = '/home/gjeanneret/MFISH_split_normal'
 
 # DATA AUGMENTATION
 
@@ -155,7 +155,21 @@ class MFISH_Dataset():
             return {'image':im,'label':gt}
         else:
             return im, gt
+
+def classImbalance(n_times):
+    db = MFISH_Dataset(root_dir = ROOT_DIR, folder = 'train', add_augment = False, totensor = False, getdic = False, only_chr = False)
+    V = np.zeros(25)
+    for _ in range(n_times)
+        for i in range(db.__len__()):
+            im , _ = db.__getitem__(i)
+            for j in range(25):
+                V[j]+=np.sum(im==j)/(512*512)
+    V /= db.__len__()*n_times
+    return V
+
         
+
+
 if __name__ == '__main__':
     os.system('clear')
     db = MFISH_Dataset(root_dir = ROOT_DIR, folder = 'train', add_augment = True, totensor = False, getdic = False, only_chr = True)

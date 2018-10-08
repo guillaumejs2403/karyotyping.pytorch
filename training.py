@@ -230,7 +230,7 @@ model.to(device)
 # ------------------------------------------
 
 v = dl.classImbalance(5)
-pdb.set_trace()
+#pdb.set_trace()
 weight = torch.Tensor(v)
 criterion = nn.CrossEntropyLoss(weight = weight).to(device)
 # cls_criterion =  nn.BCEWithLogitsLoss(weight = weight)

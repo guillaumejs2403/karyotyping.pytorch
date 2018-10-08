@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 from scipy import ndimage
 import imageio
+import pdb
 
 import torch
 import torch.utils.data as data
@@ -159,12 +160,14 @@ class MFISH_Dataset():
 def classImbalance(n_times):
     db = MFISH_Dataset(root_dir = ROOT_DIR, folder = 'train', add_augment = False, totensor = False, getdic = False, only_chr = False)
     V = np.zeros(25)
-    for _ in range(n_times)
+    #pdb.set_trace()
+    for _ in range(n_times):
         for i in range(db.__len__()):
             im , _ = db.__getitem__(i)
             for j in range(25):
-                V[j]+=np.sum(im==j)/(512*512)
-    V /= db.__len__()*n_times
+                V[j]+=(np.sum(im==j))/(512*512)
+    V = np.power(V+1e-5,-1)
+    V /= np.sum(V)
     return V
 
         

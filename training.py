@@ -26,6 +26,7 @@ from networks import gcn
 from python_scripts import learning_rate_decays as lrd, temp
 import dataloader as dl
 from loss.Ln_regularization import Ln_Loss
+from loss.dice import Dice
 from test import run_test
 
 import pdb
@@ -206,6 +207,7 @@ def count_parameters(model):
 #             Load Model
 # ------------------------------------
 
+print('Loading model')
 model = gcn.FCN(num_classes = 25)
 
 # ------------------------------------
@@ -229,12 +231,15 @@ model.to(device)
 #                  Loss
 # ------------------------------------------
 
+print('Setting class imbalance')
 v = dl.classImbalance(5)
 #pdb.set_trace()
-weight = torch.Tensor(v)
+weight = torch.tensor(v, dtype = torch.float)
+#criterion = Dice(smooth = 1e-2, n_classes = 25, invalance = v)
 criterion = nn.CrossEntropyLoss(weight = weight).to(device)
+criterion.to(device)
 # cls_criterion =  nn.BCEWithLogitsLoss(weight = weight)
-optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
+optimizer = optim.Adam(params = model.parameters(), lr=lr)
 
 # ------------------------------------------
 #                Training

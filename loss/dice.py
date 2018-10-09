@@ -3,33 +3,28 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import pdb
 
 class Dice(nn.Module):
     def __init__(self,smooth,n_classes, invalance):
+        super(Dice,self).__init__()
         self.n_classes = n_classes
         self.smooth = smooth
         self.soft = nn.Softmax(dim = 1)
         self.v = invalance
     def forward(self,pred,gt):
         loss = 0
+        #pdb.set_trace()
         pred = self.soft(pred)
         for i in range(self.n_classes):
-            loss += self.dice(pred,gt)*self.v[i]
+            loss += self.dice(pred[:,i,:,:],gt)*self.v[i]
         return loss/self.n_classes
     def dice(self,pred,gt):
-        pred = torch.squeeze(self.soft(pred)).view(-1)
+        pred = self.soft(pred).view(-1)
         gt = gt.view(-1)
         inter = (pred*gt).sum()
         union = pred.sum() + gt.sum()
         return 1 - ((2*inter+self.smooth)/(union+self.smooth))
-
-
-
-
-
-
-
-
 
 
 
